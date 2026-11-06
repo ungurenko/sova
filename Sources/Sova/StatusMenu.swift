@@ -17,17 +17,14 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         menu.autoenablesItems = false
         menu.delegate = self
         item.menu = menu
-        controller.onChange = { [weak self] in self?.refreshIcon() }
         refreshIcon()
     }
 
-    private var endsAt: Date? {
-        if case .active(let endsAt) = controller.state { endsAt } else { nil }
-    }
+    private var isActive: Bool { controller.state.isActive }
 
-    private func refreshIcon() {
-        item.button?.image = endsAt == nil ? EyeIcon.closed : EyeIcon.open
-        item.button?.setAccessibilityLabel(endsAt == nil ? "Sova: сон работает как обычно" : "Sova: Мак не уснёт")
+    func refreshIcon() {
+        item.button?.image = isActive ? EyeIcon.open : EyeIcon.closed
+        item.button?.setAccessibilityLabel(isActive ? "Sova: Мак не уснёт" : "Sova: сон работает как обычно")
     }
 
     func menuNeedsUpdate(_ menu: NSMenu) {
@@ -36,12 +33,14 @@ final class StatusMenu: NSObject, NSMenuDelegate {
         updateCountdown()
         menu.addItem(.separator())
         info("Не давать спать:")
-        for duration in Rules.durations {
-            let entry = action(duration.label, #selector(startSession(_:)))
-            entry.tag = Int(duration.seconds)
+        for option in Rules.durations {
+            let entry = action(option.label, #selector(startSession(_:)))
+            entry.representedObject = option.seconds.map { NSNumber(value: $0) }
             entry.indentationLevel = 1
         }
-        if endsAt != nil { action("Остановить", #selector(stopSession)) }
+        if isActive { action("Остановить", #selector(stopSession)) }
+        let lid = action("Затемнять экран во время сессии", #selector(toggleLidDisplay))
+        lid.state = Settings.turnDisplayOffOnLidClose ? .on : .off
         menu.addItem(.separator())
         if let battery = PowerSources.battery() {
             info("Заряд \(battery.percent)%, \(battery.onBattery ? "от батареи" : "от розетки")")
@@ -71,7 +70,14 @@ final class StatusMenu: NSObject, NSMenuDelegate {
     }
 
     private func updateCountdown() {
-        countdownItem?.title = endsAt.map { "Не спит ещё \(countdownText($0.timeIntervalSinceNow))" } ?? "Сон работает как обычно"
+        switch controller.state {
+        case .active(let endsAt?):
+            countdownItem?.title = "Не спит ещё \(countdownText(endsAt.timeIntervalSinceNow))"
+        case .active(nil):
+            countdownItem?.title = "Не спит, пока не остановлю"
+        case .idle:
+            countdownItem?.title = "Сон работает как обычно"
+        }
     }
 
     @discardableResult
@@ -91,7 +97,7 @@ final class StatusMenu: NSObject, NSMenuDelegate {
     }
 
     @objc private func startSession(_ sender: NSMenuItem) {
-        controller.start(seconds: TimeInterval(sender.tag))
+        controller.start(seconds: (sender.representedObject as? NSNumber)?.doubleValue)
         // The menu is closed by now and a notification may be off, so a failure gets a window.
         if case .idle(last: .failed(let text)?) = controller.state {
             NSApp.activate()
@@ -104,5 +110,9 @@ final class StatusMenu: NSObject, NSMenuDelegate {
 
     @objc private func stopSession() {
         controller.stop()
+    }
+
+    @objc private func toggleLidDisplay() {
+        Settings.turnDisplayOffOnLidClose.toggle()
     }
 }

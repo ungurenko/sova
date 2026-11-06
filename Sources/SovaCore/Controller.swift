@@ -10,7 +10,11 @@ public final class SessionController {
 
     public enum State: Equatable {
         case idle(last: Outcome?)
-        case active(endsAt: Date)
+        case active(endsAt: Date?)
+
+        public var isActive: Bool {
+            if case .active = self { true } else { false }
+        }
     }
 
     public private(set) var state: State = .idle(last: nil)
@@ -40,10 +44,11 @@ public final class SessionController {
     }
 
     /// Starts a session; one already running is replaced, its countdown starts over.
-    public func start(seconds: TimeInterval) {
+    /// `nil` seconds means the session runs until it is stopped or a battery/heat rule fires.
+    public func start(seconds: TimeInterval?) {
         let wasActive = rules != nil
         let t = now()
-        var new = Rules(endsAt: t.addingTimeInterval(seconds))
+        var new = Rules(endsAt: seconds.map { t.addingTimeInterval($0) })
         new.thermalChanged(thermal(), at: t)
         do {
             try hold.engage(until: new.endsAt)
@@ -82,7 +87,13 @@ public final class SessionController {
         rules = current
         switch current.verdict(at: t, battery: battery(), thermal: heat) {
         case .stop(let reason): end(reason)
-        case .keep(let recheckAt): arm(at: recheckAt)
+        case .keep(let recheckAt):
+            if let recheckAt {
+                arm(at: recheckAt)
+            } else {
+                timer?.invalidate()
+                timer = nil
+            }
         }
     }
 

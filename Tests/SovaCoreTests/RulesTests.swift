@@ -53,4 +53,23 @@ import Testing
         #expect(countdownText(0.4) == "0:00:01")
         #expect(countdownText(-5) == "0:00:00")
     }
+
+    @Test func unlimitedSessionKeepsGoingWithoutATimer() {
+        let rules = Rules(endsAt: nil)
+        let later = start.addingTimeInterval(60 * 60 * 24 * 365)
+        #expect(rules.verdict(at: later, battery: Battery(percent: 80, onBattery: true), thermal: .nominal) == .keep(recheckAt: nil))
+    }
+
+    @Test func unlimitedSessionStillStopsForBatteryAndCriticalHeat() {
+        let rules = Rules(endsAt: nil)
+        #expect(rules.verdict(at: start, battery: Battery(percent: 14, onBattery: true), thermal: .nominal) == .stop(.lowBattery(percent: 14)))
+        #expect(rules.verdict(at: start, battery: nil, thermal: .critical) == .stop(.overheated))
+    }
+
+    @Test func unlimitedSessionWithSeriousHeatChecksBackAtTheHeatDeadline() {
+        var rules = Rules(endsAt: nil)
+        rules.thermalChanged(.serious, at: start)
+        #expect(rules.verdict(at: start, battery: nil, thermal: .serious) == .keep(recheckAt: start.addingTimeInterval(300)))
+        #expect(rules.verdict(at: start.addingTimeInterval(300), battery: nil, thermal: .serious) == .stop(.overheated))
+    }
 }

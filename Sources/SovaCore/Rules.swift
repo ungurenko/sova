@@ -31,8 +31,21 @@ public struct Battery: Equatable, Sendable {
 
 public enum Verdict: Equatable, Sendable {
     /// Keep going; look again at `recheckAt` even if nothing else happens.
-    case keep(recheckAt: Date)
+    /// `nil` means no timer: only an outside event can end the session.
+    case keep(recheckAt: Date?)
     case stop(StopReason)
+}
+
+/// One entry of the "Не давать спать" menu.
+public struct DurationOption: Equatable, Sendable {
+    public let label: String
+    /// `nil` means "until stopped".
+    public let seconds: TimeInterval?
+
+    public init(label: String, seconds: TimeInterval?) {
+        self.label = label
+        self.seconds = seconds
+    }
 }
 
 /// When a session has to end. Pure: no clock, no system calls.
@@ -40,15 +53,23 @@ public struct Rules: Sendable {
     public static let batteryFloor = 15
     /// How long "serious" heat is tolerated; "critical" is never tolerated.
     public static let seriousHeatGrace: TimeInterval = 300
-    public static let durations: [(label: String, seconds: TimeInterval)] = [
-        ("30 минут", 1800), ("1 час", 3600), ("2 часа", 7200), ("4 часа", 14400), ("8 часов", 28800),
+    public static let durations: [DurationOption] = [
+        .init(label: "30 минут", seconds: 1800),
+        .init(label: "1 час", seconds: 3600),
+        .init(label: "2 часа", seconds: 7200),
+        .init(label: "4 часа", seconds: 14400),
+        .init(label: "8 часов", seconds: 28800),
+        .init(label: "12 часов", seconds: 43200),
+        .init(label: "24 часа", seconds: 86400),
+        .init(label: "Пока не остановлю", seconds: nil),
     ]
 
-    public let endsAt: Date
+    /// `nil` means the session runs until it is stopped or a battery/heat rule fires.
+    public let endsAt: Date?
     /// Since when the Mac has been "serious" or "critical" without a break.
     public private(set) var hotSince: Date?
 
-    public init(endsAt: Date) {
+    public init(endsAt: Date?) {
         self.endsAt = endsAt
     }
 
@@ -62,14 +83,17 @@ public struct Rules: Sendable {
     }
 
     public func verdict(at now: Date, battery: Battery?, thermal: ProcessInfo.ThermalState) -> Verdict {
-        if now >= endsAt { return .stop(.finished) }
+        if let endsAt, now >= endsAt { return .stop(.finished) }
         if thermal == .critical { return .stop(.overheated) }
         if let hotSince, now.timeIntervalSince(hotSince) >= Self.seriousHeatGrace { return .stop(.overheated) }
         if let battery, battery.onBattery, battery.percent < Self.batteryFloor {
             return .stop(.lowBattery(percent: battery.percent))
         }
         var next = endsAt
-        if let hotSince { next = min(next, hotSince.addingTimeInterval(Self.seriousHeatGrace)) }
+        if let hotSince {
+            let heatDeadline = hotSince.addingTimeInterval(Self.seriousHeatGrace)
+            next = next.map { min($0, heatDeadline) } ?? heatDeadline
+        }
         return .keep(recheckAt: next)
     }
 }

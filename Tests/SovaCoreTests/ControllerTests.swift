@@ -7,7 +7,7 @@ private final class FakeHold: SleepHold {
     var engageError: HoldError?
     var releaseError: HoldError?
 
-    func engage(until: Date) throws {
+    func engage(until: Date?) throws {
         if let engageError { throw engageError }
         engaged = true
     }
@@ -93,5 +93,28 @@ private final class Rig {
         }
         #expect(text.contains("Сторож"))
         #expect(rig.notices.count == 1)
+    }
+
+    @Test func unlimitedSessionStaysActiveUntilTheBatteryFalls() {
+        let rig = Rig()
+        rig.controller.start(seconds: nil)
+        #expect(rig.hold.engaged)
+        #expect(rig.controller.state == .active(endsAt: nil))
+        rig.battery = Battery(percent: 14, onBattery: true)
+        rig.controller.conditionsChanged()
+        #expect(!rig.hold.engaged)
+        #expect(rig.controller.state == .idle(last: .stopped(.lowBattery(percent: 14))))
+    }
+
+    @Test func replacingATimedSessionWithAnUnlimitedOneKeepsTheHoldAndChangesTheEnd() {
+        let rig = Rig()
+        rig.controller.start(seconds: 3600)
+        #expect(rig.controller.state == .active(endsAt: rig.clock.addingTimeInterval(3600)))
+        rig.controller.start(seconds: nil)
+        #expect(rig.hold.engaged)
+        #expect(rig.controller.state == .active(endsAt: nil))
+        rig.controller.start(seconds: 7200)
+        #expect(rig.hold.engaged)
+        #expect(rig.controller.state == .active(endsAt: rig.clock.addingTimeInterval(7200)))
     }
 }

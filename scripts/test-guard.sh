@@ -25,7 +25,7 @@ case_() {
   journal=no; [ -f "$SOVA_HOME/session" ] && journal=yes
   case "$5" in
     restores) ok=$([ "$calls" = 1 ] && [ "$journal" = no ] && grep -q 'disablesleep 0' "$T/calls" && echo y) ;;
-    leaves)   ok=$([ "$calls" = 0 ] && echo y) ;;
+    leaves)   ok=$([ "$calls" = 0 ] && { [ "$2" = none ] || [ "$journal" = yes ]; } && echo y) ;;
     retries)  ok=$([ "$journal" = yes ] && echo y) ;;
     keeps)    ok=$([ "$calls" = 1 ] && [ "$journal" = yes ] && echo y) ;;
   esac
@@ -39,5 +39,7 @@ case_ "program died mid-session: restores sleep"         $((now + 3600))   dead 
 case_ "app marked the journal expired (0): restores"     0                 alive sudo-ok       restores
 case_ "sudo refuses: keeps the journal to retry"         $((now - 5))      dead  sudo-refuses  retries
 case_ "new session began meanwhile: keeps its journal"   $((now - 5))      alive sudo-new-session keeps
+case_ "unlimited session, program alive: leaves it"      253402300799      alive sudo-ok       leaves
+case_ "unlimited session, program died: restores sleep"  253402300799      dead  sudo-ok       restores
 
 exit $failures

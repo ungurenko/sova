@@ -86,4 +86,11 @@ private final class FakeSystem {
         #expect(!system.journalExists)
     }
 
+    @Test func unlimitedSessionIsWrittenToTheJournalAsAFarFutureEnd() throws {
+        let system = FakeSystem()
+        try system.hold().engage(until: nil)
+        #expect(try String(contentsOf: system.journal, encoding: .utf8) == "253402300799\n")
+        #expect(system.sleepDisabled)
+    }
+
 }

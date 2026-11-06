@@ -4,8 +4,9 @@
 # launchd runs it at login and every 60 seconds (installed by install.sh).
 #
 # It does nothing while there is no journal file, so a sleep setting that Sova
-# did not make is never touched. The journal is one line, the session end in Unix
-# seconds; Sources/SovaCore/SleepHold.swift writes it.
+# did not make is never touched. The journal is one line: the session end in Unix
+# seconds, or 253402300799 (year 9999) for a session that runs until stopped;
+# Sources/SovaCore/SleepHold.swift writes it.
 # The SOVA_* variables only exist so scripts/test-guard.sh can run this file safely.
 
 SUPPORT="${SOVA_HOME:-$HOME/Library/Application Support/Sova}"

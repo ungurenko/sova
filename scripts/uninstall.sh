@@ -23,4 +23,6 @@ fi
 launchctl bootout "gui/$(id -u)/$LABEL" 2>/dev/null
 rm -f "$HOME/Library/LaunchAgents/$LABEL.plist" "$HOME/Library/Logs/Sova.log"
 rm -rf "$HOME/Applications/Sova.app" "$SUPPORT"
+# The menu setting lives in UserDefaults, not in the app folder.
+/usr/bin/defaults delete com.ungurenko.sova 2>/dev/null || true
 echo "Sova удалена."

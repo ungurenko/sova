@@ -22,6 +22,8 @@ enum Notifier {
 final class AppDelegate: NSObject, NSApplicationDelegate {
     private var controller: SessionController!
     private var statusMenu: StatusMenu!
+    private var lidMonitor: LidMonitor!
+    private var screenKeeper: ScreenKeeper!
     private var signalSources: [DispatchSourceSignal] = []
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -42,14 +44,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             notify: { Notifier.post($0) }
         )
         statusMenu = StatusMenu(controller: controller)
+        let sessionActive: @MainActor () -> Bool = { [weak self] in self?.controller?.state.isActive ?? false }
+        screenKeeper = ScreenKeeper(isSessionActive: sessionActive, settingEnabled: { Settings.turnDisplayOffOnLidClose })
+        screenKeeper.recoverLeftover()
+        lidMonitor = LidMonitor(
+            isSessionActive: sessionActive,
+            settingEnabled: { Settings.turnDisplayOffOnLidClose },
+            screenKeeper: screenKeeper
+        )
+        controller.onChange = { [weak self] in
+            self?.statusMenu.refreshIcon()
+            self?.lidMonitor?.evaluate()
+        }
+        lidMonitor.start()
         Notifier.requestPermission()
 
         PowerSources.observe { [weak self] in self?.controller.conditionsChanged() }
         let recheck: @Sendable (Notification) -> Void = { [weak self] _ in
-            MainActor.assumeIsolated { self?.controller.conditionsChanged() }
+            MainActor.assumeIsolated {
+                self?.controller.conditionsChanged()
+                self?.lidMonitor?.evaluate()
+            }
         }
         NotificationCenter.default.addObserver(forName: ProcessInfo.thermalStateDidChangeNotification, object: nil, queue: .main, using: recheck)
         NSWorkspace.shared.notificationCenter.addObserver(forName: NSWorkspace.didWakeNotification, object: nil, queue: .main, using: recheck)
+        // A display was connected or disconnected: the lid policy may need to act again.
+        NotificationCenter.default.addObserver(forName: NSApplication.didChangeScreenParametersNotification, object: nil, queue: .main, using: recheck)
 
         // A plain kill must give sleep back too.
         for signalNumber in [SIGTERM, SIGINT, SIGHUP] {
@@ -65,9 +85,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             signalSources.append(source)
         }
 
-        // `Sova --seconds 90` starts a session at launch (used to test the real thing).
+        // `Sova --seconds 90` starts a session at launch (used to test the real thing);
+        // `--idle-dim-seconds 10` shortens the idle time before the screen goes dark.
         let args = CommandLine.arguments
-        let longest = Rules.durations.map(\.seconds).max() ?? 0
+        if let flag = args.firstIndex(of: "--idle-dim-seconds"), flag + 1 < args.count, let seconds = Double(args[flag + 1]), seconds >= 1 {
+            screenKeeper.idleThresholdOverride = seconds
+        }
+        let longest = Rules.durations.compactMap(\.seconds).max() ?? 0
         if let flag = args.firstIndex(of: "--seconds"), flag + 1 < args.count,
            let seconds = Double(args[flag + 1]), seconds >= 1, seconds <= longest {
             controller.start(seconds: seconds)
@@ -76,6 +100,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationWillTerminate(_ notification: Notification) {
         controller?.shutdown()
+        screenKeeper?.shutdown()
     }
 }
 

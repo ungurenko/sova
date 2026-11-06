@@ -2,7 +2,8 @@ import Foundation
 
 /// Keeps the Mac from sleeping with the lid closed, and can always give sleep back.
 public protocol SleepHold {
-    func engage(until: Date) throws
+    /// `nil` means the session runs until it is stopped.
+    func engage(until: Date?) throws
     /// Safe to call when nothing is engaged.
     func release() throws
     /// At launch: a journal left by a previous run means that run died with sleep still off.
@@ -26,6 +27,10 @@ public struct PmsetHold: SleepHold {
     static let sudo = "/usr/bin/sudo"
     static let pmset = "/usr/bin/pmset"
 
+    /// A session without an end is written to the journal as this instant (31.12.9999),
+    /// so scripts/guard.sh sees a future time and only acts when Sova is gone.
+    public static let neverEnds = Date(timeIntervalSince1970: 253_402_300_799)
+
     private let journal: URL
     private let run: Run
 
@@ -34,9 +39,10 @@ public struct PmsetHold: SleepHold {
         self.run = run
     }
 
-    public func engage(until: Date) throws {
+    public func engage(until: Date?) throws {
+        let end = until ?? Self.neverEnds
         try FileManager.default.createDirectory(at: journal.deletingLastPathComponent(), withIntermediateDirectories: true)
-        try "\(Int(until.timeIntervalSince1970))\n".write(to: journal, atomically: true, encoding: .utf8)
+        try "\(Int(end.timeIntervalSince1970))\n".write(to: journal, atomically: true, encoding: .utf8)
         do {
             try setSleepDisabled(true)
         } catch {
