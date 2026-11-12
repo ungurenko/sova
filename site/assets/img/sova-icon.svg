@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="dawn-bg" x1="0" y1="0" x2="0.2" y2="1">
+      <stop offset="0" stop-color="#F7C877"/>
+      <stop offset="1" stop-color="#E68F4C"/>
+    </linearGradient>
+  </defs>
+  <rect x="100" y="100" width="824" height="824" rx="185" fill="url(#dawn-bg)"/>
+  <path d="M252 600 C340 468 430 430 512 430 C594 430 684 468 772 600 C684 732 594 770 512 770 C430 770 340 732 252 600 Z" fill="none" stroke="#23252A" stroke-width="32" stroke-linejoin="round"/>
+  <circle cx="512" cy="600" r="86" fill="#23252A"/>
+  <circle cx="486" cy="570" r="17" fill="#F7C877"/>
+  <g stroke="#23252A" stroke-width="30" stroke-linecap="round">
+    <path d="M512 365 L512 265"/>
+    <path d="M611 387 L654 296"/>
+    <path d="M692 449 L738 410"/>
+    <path d="M413 387 L370 296"/>
+    <path d="M332 449 L286 410"/>
+  </g>
+</svg>

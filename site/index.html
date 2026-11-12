@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sova: MacBook не спит с закрытой крышкой</title>
+  <meta name="description" content="Значок-глаз в строке меню macOS. Пока идёт сессия, MacBook не засыпает даже с закрытой крышкой, экран темнеет и не блокируется. ИИ-агенты работают в рюкзаке. Бесплатно, открытый код.">
+  <meta name="theme-color" content="#101010">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Sova: MacBook не спит с закрытой крышкой">
+  <meta property="og:description" content="Значок-глаз в строке меню. ИИ-агенты работают, пока Мак лежит в рюкзаке.">
+  <meta property="og:image" content="assets/img/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="assets/img/sova-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script>document.documentElement.classList.add("js")</script>
+</head>
+<body>
+  <a class="skip" href="#how">К содержанию</a>
+
+  <!-- Строка меню macOS: навигация живёт в мире продукта -->
+  <header class="menubar">
+    <div class="menubar__inner">
+      <a class="menubar__brand" href="#top" aria-label="Sova, наверх">
+        <img src="assets/img/sova-icon.svg" width="22" height="22" alt="">
+        <span>Sova</span>
+      </a>
+      <nav class="menubar__nav" aria-label="Разделы">
+        <a href="#how">Как работает</a>
+        <a href="#safe">Безопасность</a>
+        <a href="#install">Установка</a>
+      </nav>
+      <div class="menubar__status">
+        <a class="menubar__gh" href="https://github.com/ungurenko/sova">GitHub</a>
+        <span class="menubar__eye" title="Сессия идёт">
+          <svg viewBox="0 0 32 20" width="26" height="16" aria-hidden="true"><path d="M2 12C7 5 11 3.5 16 3.5S25 5 30 12C25 19 21 20.5 16 20.5S7 19 2 12Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="16" cy="12" r="4.2" fill="currentColor"/></svg>
+          <span class="menubar__time" data-countdown>2:41:05</span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- 00. Первый экран -->
+    <section class="hero" id="top">
+      <div class="hero__glow" aria-hidden="true"></div>
+      <div class="wrap hero__inner">
+        <div class="hero__labels" aria-hidden="true">
+          <span>Для macOS</span>
+          <span>Яркость 0%</span>
+        </div>
+        <h1 class="hero__title">
+          <span class="hero__kicker">MacBook с закрытой <mark class="marker">крышкой</mark></span>
+          <span class="hero__giant">
+            <span class="hero__word">НЕ</span>
+            <span class="hero__owl" data-tilt>
+              <picture>
+                <source media="(max-width: 767px)" srcset="assets/img/hero-m-500.webp 500w, assets/img/hero-m-800.webp 800w" sizes="80vw">
+                <img src="assets/img/hero-800.webp" srcset="assets/img/hero-560.webp 560w, assets/img/hero-800.webp 800w" sizes="(max-width: 1100px) 34vw, 420px" width="800" height="709" alt="" fetchpriority="high">
+              </picture>
+            </span>
+            <span class="hero__word">СПИТ</span>
+          </span>
+        </h1>
+        <div class="hero__foot">
+          <p class="hero__lead"><span class="hide-sm">Sova держит Мак бодрым, пока идёт сессия. </span>Экран темнеет, Мак не&nbsp;блокируется, и&nbsp;<span class="nowrap">ИИ-агенты</span> работают даже в&nbsp;рюкзаке.</p>
+          <div class="hero__cta">
+            <a class="btn btn--primary" href="#install">
+              <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M10 3v10m0 0-4-4m4 4 4-4M4 16h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Скачать для macOS
+            </a>
+            <span class="hero__note">Бесплатно, открытый код</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 01. Как это работает -->
+    <section class="how" id="how">
+      <div class="seam" aria-hidden="true"></div>
+      <div class="wrap">
+        <header class="sec-head reveal">
+          <span class="sec-num">01</span>
+          <h2>Три шага до ночной смены</h2>
+        </header>
+
+        <ol class="steps">
+          <li class="step reveal">
+            <img class="step__obj" src="assets/img/hourglass-480.webp" srcset="assets/img/hourglass-320.webp 320w, assets/img/hourglass-480.webp 480w" sizes="(max-width: 767px) 128px, 220px" width="480" height="480" alt="Песочные часы из хрома и стекла" loading="lazy">
+            <div class="step__text">
+              <span class="step__num">Шаг 1</span>
+              <h3>Выберите срок</h3>
+              <p>Клик по глазу в строке меню, дальше «Не давать спать»: от 30 минут до 24 часов или «Пока не остановлю». Глаз открывается, в меню идёт обратный отсчёт.</p>
+            </div>
+            <div class="step__shot">
+              <div class="menu-mock" aria-label="Меню Sova во время сессии">
+                <p class="menu-mock__status">Не спит ещё <b data-countdown>2:41:05</b></p>
+                <hr>
+                <p class="menu-mock__title">Не давать спать:</p>
+                <ul class="menu-mock__list">
+                  <li>30 минут</li>
+                  <li>1 час</li>
+                  <li class="is-on">24 часа</li>
+                  <li>Пока не остановлю</li>
+                </ul>
+                <p class="menu-mock__item">Остановить</p>
+                <hr>
+                <p class="menu-mock__check"><span class="tick" aria-hidden="true"></span>Затемнять экран во время сессии</p>
+              </div>
+            </div>
+          </li>
+
+          <li class="step reveal">
+            <img class="step__obj" src="assets/img/backpack-480.webp" srcset="assets/img/backpack-320.webp 320w, assets/img/backpack-480.webp 480w" sizes="(max-width: 767px) 128px, 220px" width="480" height="480" alt="Рюкзак из матового стекла, внутри ноутбук" loading="lazy">
+            <div class="step__text">
+              <span class="step__num">Шаг 2</span>
+              <h3>Закройте крышку</h3>
+              <p>Мак продолжает работать. Sova опускает яркость встроенного экрана в ноль, поэтому Мак не блокируется и агенты видят рабочий стол. Любое нажатие или открытая крышка возвращают яркость.</p>
+            </div>
+            <div class="step__shot">
+              <div class="bright-mock">
+                <p class="bright-mock__label">Встроенный экран</p>
+                <div class="bright-mock__row">
+                  <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true"><circle cx="10" cy="10" r="3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+                  <span class="bright-mock__track"><span class="bright-mock__knob"></span></span>
+                  <b>0%</b>
+                </div>
+                <p class="bright-mock__state"><span class="dot" aria-hidden="true"></span>Крышка закрыта, агенты работают</p>
+              </div>
+            </div>
+          </li>
+
+          <li class="step reveal">
+            <img class="step__obj" src="assets/img/moon-480.webp" srcset="assets/img/moon-320.webp 320w, assets/img/moon-480.webp 480w" sizes="(max-width: 767px) 128px, 220px" width="480" height="480" alt="Полумесяц из хрома и стекла" loading="lazy">
+            <div class="step__text">
+              <span class="step__num">Шаг 3</span>
+              <h3>Сон вернётся сам</h3>
+              <p>Время вышло, сессия закончилась, приходит уведомление. Закончить раньше можно кнопкой «Остановить» в меню.</p>
+            </div>
+            <div class="step__shot">
+              <div class="note-mock">
+                <img src="assets/img/sova-icon.svg" width="36" height="36" alt="">
+                <div>
+                  <p class="note-mock__app">Sova <span>сейчас</span></p>
+                  <p class="note-mock__text">Сессия закончилась. Сон работает как обычно.</p>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 02. Почему это безопасно -->
+    <section class="safe" id="safe">
+      <div class="seam" aria-hidden="true"></div>
+      <div class="wrap">
+        <header class="sec-head reveal">
+          <span class="sec-num">02</span>
+          <h2>Три предохранителя</h2>
+        </header>
+        <p class="sec-head__lead reveal">Сон вернётся, даже если Sova упала, Мак перезагрузился посреди сессии, батарея садится или Мак перегрелся.</p>
+
+        <div class="safe__grid">
+          <article class="card card--main reveal">
+            <img class="card__obj card__obj--main" src="assets/img/lantern-480.webp" srcset="assets/img/lantern-320.webp 320w, assets/img/lantern-480.webp 480w" sizes="(max-width: 767px) 160px, 260px" width="480" height="480" alt="Фонарь ночного сторожа" loading="lazy">
+            <div class="card__body">
+              <span class="chip">Раз в минуту</span>
+              <h3>Сторож</h3>
+              <p>Маленький скрипт проверяет сессию каждую минуту. Если Sova упала или Мак перезагрузился посреди сессии, сторож возвращает сон. Чужие настройки сна он не трогает.</p>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <img class="card__obj" src="assets/img/battery-320.webp" width="320" height="320" alt="Батарейка с низким зарядом" loading="lazy">
+            <div class="card__body">
+              <span class="chip">Батарея</span>
+              <p class="card__big">15%</p>
+              <p>Заряд ниже 15% и зарядки нет: сессия заканчивается сама, приходит уведомление.</p>
+            </div>
+          </article>
+
+          <article class="card reveal">
+            <img class="card__obj" src="assets/img/thermometer-320.webp" width="320" height="320" alt="Термометр" loading="lazy">
+            <div class="card__body">
+              <span class="chip">Перегрев</span>
+              <h3>Горячо</h3>
+              <p>Мак перегрелся: сессия заканчивается сама, приходит уведомление.</p>
+            </div>
+          </article>
+        </div>
+
+        <ul class="facts reveal" aria-label="Права и границы">
+          <li>В sudoers ровно две команды, без шаблонов</li>
+          <li>Яркость и запрет сна экрана работают без root</li>
+          <li>Внешний монитор при закрытой крышке не трогаем</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 03. Установка -->
+    <section class="install" id="install">
+      <div class="seam" aria-hidden="true"></div>
+      <div class="wrap install__grid">
+        <div class="install__main">
+          <header class="sec-head reveal">
+            <span class="sec-num">03</span>
+            <h2>Установка одной командой</h2>
+          </header>
+          <p class="install__lead reveal">Откройте Терминал, вставьте строку и нажмите Enter. Один раз Мак спросит пароль в системном окне.</p>
+
+          <div class="term reveal">
+            <div class="term__bar">
+              <span class="term__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+              <span class="term__title">Терминал · ночная смена</span>
+            </div>
+            <div class="term__body">
+              <code id="cmd">git clone https://github.com/ungurenko/sova.git &amp;&amp; cd sova &amp;&amp; ./scripts/install.sh</code>
+              <button class="btn btn--copy" type="button" data-copy="#cmd">
+                <span class="btn__label">Скопировать</span>
+              </button>
+            </div>
+          </div>
+          <p class="install__note reveal">Удалить: <code>./scripts/uninstall.sh</code> в той же папке. Он убирает всё, включая правило sudoers.</p>
+        </div>
+
+        <aside class="install__side reveal">
+          <p class="stat"><span class="stat__num">850</span><span class="stat__cap">строк кода в Sova, примерно</span></p>
+          <p class="stat stat--muted"><span class="stat__num">16.000</span><span class="stat__cap">строк в форке Insomnia, который Sova заменила</span></p>
+          <a class="btn btn--ghost" href="https://github.com/ungurenko/sova">Код на GitHub</a>
+        </aside>
+      </div>
+    </section>
+
+    <!-- 04. Финал -->
+    <section class="final">
+      <div class="seam" aria-hidden="true"></div>
+      <div class="final__glow" aria-hidden="true"></div>
+      <div class="wrap final__inner">
+        <img class="final__owl reveal" src="assets/img/final-900.webp" srcset="assets/img/final-600.webp 600w, assets/img/final-900.webp 900w" sizes="(max-width: 767px) 90vw, 640px" width="900" height="498" alt="Сова из хрома в полёте" loading="lazy">
+        <h2 class="final__giant reveal">Ночная смена</h2>
+        <p class="final__lead reveal">Закройте крышку и&nbsp;уходите. Сова посторожит, а&nbsp;сон вернётся сам.</p>
+        <div class="final__cta reveal">
+          <a class="btn btn--primary" href="#install">
+            <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true"><path d="M10 3v10m0 0-4-4m4 4 4-4M4 16h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Скачать для macOS
+          </a>
+          <a class="btn btn--ghost" href="https://github.com/ungurenko/sova">Код на GitHub</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot__inner">
+      <p>Sova для macOS</p>
+      <p>Рисунок глаза из форка Insomnia (krishhgg/Insomnia, MIT). Приём с гашением экрана из Modafinil (narcotic-sh/modafinil, MIT).</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js" defer></script>
+</body>
+</html>
